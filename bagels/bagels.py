@@ -46,32 +46,48 @@ def get_choice(option: list, input_legend: str = 'Give me your choice: ', error_
         resp = input(input_legend).lower().strip()
         for i in range(n):
             if resp == option[i]:
-                return n 
+                return resp
         cont += 1
         clear_screen()
 
 def guess_number(guess: str, number:str):
     '''
+    Verify if a string number matches a random number. It get hints if any number match or is in the string.
     
-    '''
-    win = 0
-    pico = [0, 0, 0]
-    ferm = [0, 0, 0]
-    bage = [0, 0, 0]
-    for i in range(3):
-        if guess[i] == number[i]:
-            bage[i] = 1
-            win += 1
-        elif guess[i] in number:
-            ferm[i] = 1
-        else:
-            pico[i] = 1
-    
-    if win == 3:
-        return 1, []
-    
-    
+    Input:
+    ------
+    Recives two numbers of the same size.
 
+    Output:
+    -------
+    Returns the type of guess and a list of hints. If the response is 1, then the number has been guessed, if is -1, non of the number is in the random number, 
+    and if is zero, there are some matches.
+    '''
+    str_length = len(guess)
+    if str_length != len(number):
+        raise 
+    hints = []
+    ferm_c = 0
+    pico_c = 0
+    for i in range(str_length):
+        if guess[i] == number[i]:
+            ferm_c += 1
+        elif guess[i] in number:
+            pico_c += 1
+    
+    if ferm_c == str_length:
+        return 1, hints
+    elif pico_c == 0:
+        hints.append('Bagels')
+        return -1, hints
+    else:
+        for _ in range(ferm_c + pico_c):
+            if rd.randint(0,1) == 1 and pico_c > 0:
+                hints.append('Pico')
+                pico_c - 1
+            else:
+                hints.append('Fermi')
+        return 0, hints
 
 if __name__ == '__main__':
     eng_text = {
@@ -81,12 +97,14 @@ if __name__ == '__main__':
         'rules_1':'  Pico         One digit is correct, but in the wrong position.',
         'rules_2':'  Fermi        One digit is correct and in the right position.',
         'rules_3':'  Bagels       No digit is correct.\n',
-        'play':'Play? (y/n):',
+        'play':'Play? (y/n): ',
         'play_o':['y', 'n'],
         'ini':'I am thinking of a 3-digit number. Try to guess what it is.\nYou have 10 guesses to get it.',
         'end':'Bye!',
-        'guess':'Guess ',
-        'w_numb':'The number you guess must be between 0 and 999.\nGuess another number: '
+        'guess':'Guess',
+        'w_numb':'The number you guess must be between 0 and 999.\nGuess another number: ',
+        'win':'You got it!',
+        'play_a':'\nDo you want to play again? (y/n): '
     }
     esp_text = {
         'wrong_c':'Opción no disponible, ingrese su elección nuevamente.\n',
@@ -95,14 +113,17 @@ if __name__ == '__main__':
         'rules_1':'  Pico         Un dígito es correcto, pero en la posición incorrecta.',
         'rules_2':'  Fermi        Un dígito es correcto y en la posición correcta.',
         'rules_3':'  Bagels       Ningún dígito es correcto.\n',
-        'play':'Jugar? (s/n):',
+        'play':'Jugar? (s/n): ',
         'play_o':['s', 'n'],
         'ini':'Estoy pensando un número de 3 dígitos. Intenta adivinar cuál es.\nTienes 10 Oportunidades.',
         'end':'Adiós!',
-        'guess':'Oportunidad ',
-        'w_numb':'El número que proporcione debe estar entre 0 y 999.\nIngrese otro número: '
+        'guess':'Oportunidad',
+        'w_numb':'El número que proporcione debe estar entre 0 y 999.\nIngrese otro número: ',
+        'win':'Has encontrado el número!',
+        'play_a':'Quieres jugar de nuevo? (s/n): '
     }
     text = [eng_text, esp_text]
+    rounds = 10
 
     clear_screen()
 
@@ -118,18 +139,37 @@ if __name__ == '__main__':
 
     ini = get_choice(text[lang]['play_o'], text[lang]['play'], text[lang]['wrong_c'])
 
-    if ini == 'y':
-        my_num = gen_number()
-        print(text[lang]['ini'])
-        for i in range(10):
-            resp = input(text[lang]['guess'],i+1)
-            ok = True
-            while(ok):
-                if int(resp) > 999:
-                    resp = input(text[lang]['w_numb'])
-                else:
-                    ok = False
-            
+    if ini == text[lang]['play_o'][0]:
+        matchs = 1
+        while(matchs>0):
+            my_numb = gen_number()
+            print(text[lang]['ini'])
+            for i in range(rounds):
+                print(17*'-')
+                print('#' + str(my_numb))
+                msg = text[lang]['guess'] + " #" + str(i+1) + ": "
+                resp = input(msg)
+                ok = True
+                while(ok):
+                    if int(resp) > 999:
+                        resp = input(text[lang]['w_numb'])
+                    else:
+                        ok = False
+                result, hints = guess_number(str(resp), str(my_numb))
 
+                if result == 1:
+                    print(text[lang]['win'])
+                    break
+                elif result == -1:
+                    print(hints[0])
+                else:
+                    for h in hints:
+                        print(h)
+            if matchs > 1:
+                resp = input(text[lang]['play_a'])
+                if resp == text[lang]['play_o'][0]:
+                    matchs = 0
+                else:
+                    matchs += 1
 
     print(text[lang]['end'])
