@@ -65,7 +65,7 @@ def guess_number(guess: str, number:str):
     '''
     str_length = len(guess)
     if str_length != len(number):
-        raise 
+        raise ValueError('Guess number must be the same length as hiden number')
     hints = []
     ferm_c = 0
     pico_c = 0
@@ -77,18 +77,22 @@ def guess_number(guess: str, number:str):
     
     if ferm_c == str_length:
         return 1, hints
-    elif pico_c == 0:
+    elif pico_c == 0 and ferm_c == 0:
         hints.append('Bagels')
         return -1, hints
     else:
-        for _ in range(ferm_c + pico_c):
-            if rd.randint(0,1) == 1 and pico_c > 0:
+        while(True):
+            numb = rd.randint(0,1)
+            if numb == 1 and pico_c > 0:
                 hints.append('Pico')
-                pico_c - 1
-            else:
+                pico_c -= 1
+            elif ferm_c > 0:
                 hints.append('Fermi')
+                ferm_c -= 1 
+            elif ferm_c == 0 and pico_c == 0:
+                break
         return 0, hints
-
+    
 if __name__ == '__main__':
     eng_text = {
         'wrong_c':'Option not available, please type again your choice.\n',
@@ -100,11 +104,12 @@ if __name__ == '__main__':
         'play':'Play? (y/n): ',
         'play_o':['y', 'n'],
         'ini':'I am thinking of a 3-digit number. Try to guess what it is.\nYou have 10 guesses to get it.',
-        'end':'Bye!',
+        'end':'\nBye!',
         'guess':'Guess',
         'w_numb':'The number you guess must be between 0 and 999.\nGuess another number: ',
         'win':'You got it!',
-        'play_a':'\nDo you want to play again? (y/n): '
+        'play_a':'\nDo you want to play again? (y/n): ',
+        'game_o':'\nGAME OVER :('
     }
     esp_text = {
         'wrong_c':'Opción no disponible, ingrese su elección nuevamente.\n',
@@ -116,11 +121,12 @@ if __name__ == '__main__':
         'play':'Jugar? (s/n): ',
         'play_o':['s', 'n'],
         'ini':'Estoy pensando un número de 3 dígitos. Intenta adivinar cuál es.\nTienes 10 Oportunidades.',
-        'end':'Adiós!',
+        'end':'\nAdiós!',
         'guess':'Oportunidad',
         'w_numb':'El número que proporcione debe estar entre 0 y 999.\nIngrese otro número: ',
         'win':'Has encontrado el número!',
-        'play_a':'Quieres jugar de nuevo? (s/n): '
+        'play_a':'\nQuieres jugar de nuevo? (s/n): ',
+        'game_o':'\nPerdiste el juego :('
     }
     text = [eng_text, esp_text]
     rounds = 10
@@ -142,11 +148,24 @@ if __name__ == '__main__':
     if ini == text[lang]['play_o'][0]:
         matchs = 1
         while(matchs>0):
+            matchs += 1
+            if matchs > 2:
+                resp = input(text[lang]['play_a'])
+                if resp == text[lang]['play_o'][1]:
+                    matchs = 0
+                    break
+                else:
+                    clear_screen()
+                    print(text[lang]['title'])
+                    print(text[lang]['rules_t'])
+                    print(text[lang]['rules_1'])
+                    print(text[lang]['rules_2'])
+                    print(text[lang]['rules_3'])
             my_numb = gen_number()
             print(text[lang]['ini'])
             for i in range(rounds):
                 print(17*'-')
-                print('#' + str(my_numb))
+                print('>' + str(my_numb))
                 msg = text[lang]['guess'] + " #" + str(i+1) + ": "
                 resp = input(msg)
                 ok = True
@@ -155,7 +174,13 @@ if __name__ == '__main__':
                         resp = input(text[lang]['w_numb'])
                     else:
                         ok = False
-                result, hints = guess_number(str(resp), str(my_numb))
+
+                if int(resp) < 10:
+                    resp = '00' + str(int(resp))
+                elif int(resp) < 100:
+                    resp = '0' + str(int(resp))
+
+                result, hints = guess_number(resp, str(my_numb))
 
                 if result == 1:
                     print(text[lang]['win'])
@@ -165,11 +190,7 @@ if __name__ == '__main__':
                 else:
                     for h in hints:
                         print(h)
-            if matchs > 1:
-                resp = input(text[lang]['play_a'])
-                if resp == text[lang]['play_o'][0]:
-                    matchs = 0
-                else:
-                    matchs += 1
+            if i > rounds - 1:
+                print(text[lang]['game_o'])
 
     print(text[lang]['end'])
