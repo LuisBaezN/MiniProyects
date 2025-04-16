@@ -198,10 +198,10 @@ if __name__ == '__main__':
                 elif result == -1:
                     print('- ' + hints[0] + ' -')
                 else:
-                    print(hints)
                     print(end='- ')
                     for h in hints:
                         print(h, end=' - ')
+                    print()
             
             if i == rounds - 1:
                 print(text[lang]['game_o'])
