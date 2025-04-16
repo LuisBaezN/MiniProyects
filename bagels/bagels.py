@@ -23,7 +23,15 @@ def gen_number() -> str:
     -------
     A random number as string.
     '''
-    return str(rd.randint(0,999))
+    numb = rd.randint(0,999)
+
+    # make a function of this with a size of n 0
+    if numb < 10:
+        numb = '00' + str(numb)
+    elif numb < 100:
+        numb = '0' + str(numb)
+
+    return numb
 
 def get_choice(option: list, input_legend: str = 'Give me your choice: ', error_info: str='Choice not available.') -> str:
     '''
@@ -109,7 +117,8 @@ if __name__ == '__main__':
         'w_numb':'The number you guess must be between 0 and 999.\nGuess another number: ',
         'win':'You got it!',
         'play_a':'\nDo you want to play again? (y/n): ',
-        'game_o':'\nGAME OVER :('
+        'game_o':'\nGAME OVER :(',
+        'numb':'The number I thought was '
     }
     esp_text = {
         'wrong_c':'Opción no disponible, ingrese su elección nuevamente.\n',
@@ -126,7 +135,8 @@ if __name__ == '__main__':
         'w_numb':'El número que proporcione debe estar entre 0 y 999.\nIngrese otro número: ',
         'win':'Has encontrado el número!',
         'play_a':'\nQuieres jugar de nuevo? (s/n): ',
-        'game_o':'\nPerdiste el juego :('
+        'game_o':'\nPerdiste el juego :(',
+        'numb':'El número que pensé fue el '
     }
     text = [eng_text, esp_text]
     rounds = 10
@@ -186,11 +196,16 @@ if __name__ == '__main__':
                     print(text[lang]['win'])
                     break
                 elif result == -1:
-                    print(hints[0])
+                    print('- ' + hints[0] + ' -')
                 else:
+                    print(hints)
+                    print(end='- ')
                     for h in hints:
-                        print(h)
-            if i > rounds - 1:
+                        print(h, end=' - ')
+            
+            if i == rounds - 1:
                 print(text[lang]['game_o'])
+                print(text[lang]['numb'] + str(my_numb))
+
 
     print(text[lang]['end'])
