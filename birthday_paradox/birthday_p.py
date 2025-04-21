@@ -64,11 +64,12 @@ def generate_birthdays(num: int) -> list:
     return months, days
 
 def main():
+    # With 70 people, there is a 99%
     eng_text = {
         'wrong_c':'Option not available, please type again your choice.\n',
-        'title':'Birthday paradox.\n\nExplore the surprising probabilities of this paradox.',
+        'title':'Birthday paradox.\n\nThe Birthday Pradox shows us that in agroup of N people, the odds that two of them have matching birthdays is surprisingly large.\n\n(It is not actually a paradox, it is just a surprising result)',
         'input':'How many birthdays shall I generate? (Max 100) \n > ',
-        'show_1':'Here are the bithdays: ',
+        'show_1':'\nHere are the bithdays:\n',
         'first_r':'\n\nMatching birthdays in this simulation: ',
         'months':{
             1:'Jan',
@@ -84,14 +85,15 @@ def main():
             11:'Nov',
             12:'Dec'
         },
-        'ini':'\nInitianing 100,000 instances...',
-        'sim':' simulations run.'
+        'ini':'\nInitianing 100,000 instances...\n',
+        'sim':' simulations run.',
+        'results':'\nOut of {:,} simulations of {} people, there was a matching birthday in that group {:,} times. This means that {} people have a {:.2f}% chance of having a matching birthday in their group.'
     }
     esp_text = {
         'wrong_c':'Opción no disponible, ingrese su elección nuevamente.\n',
-        'title':'Paradoja del cumpleaños.\n\nExplore las sorprendentes de esta paradoja.',
+        'title':'Paradoja del cumpleaños.\n\nLa paradoja del cumpleaños muestra que dentro de un grupo de N personas, las probabilidades de que dos de ellas cumplan años el mismo día es sorpresivamente alta.\n\n(Actualmente no es una paradoja, solo un resultado sorprendente)',
         'input':'Cuántos cumpleaños debería generar? (Max 100) \n > ',
-        'show_1':'Aquí están los cumpleaños: ',
+        'show_1':'\nAquí están los cumpleaños:\n',
         'first_r':'\n\nNúmero de cumpleaños que coinciden: ',
         'months':{
             1:'Ene',
@@ -107,8 +109,9 @@ def main():
             11:'Nov',
             12:'Dic'
         },
-        'ini':'\nIniciando 100,000 instancias...',
-        'sim':' simulaciones ejecutadas.'
+        'ini':'\nIniciando 100,000 instancias...\n',
+        'sim':' simulaciones ejecutadas.',
+        'results':'\nDe las {:,} simulaciones de {} personas, hubo una coincidencia en ese grupo {:,} veces. Esto significa que {} personas tienen {:.2f}% de probabilidad de tener una coincidencia en su grupo.'
     }
     text = [eng_text, esp_text]
 
@@ -128,42 +131,44 @@ def main():
 
     months, days = generate_birthdays(resp)
 
+    print(37*'-')
     print(text[lang]['show_1'])
     
     birthday = []
     mat = 0
     for i in range(resp):
-        birthday.append(text[lang]['months'][months[i]] + ' ' + str(days[i]))
-        print(birthday[i], end=' ')
-        if mat == 0 and i > 0 and birthday[i] in birthday:
+        current_bd = text[lang]['months'][months[i]] + ' ' + str(days[i])
+        if mat == 0 and i > 0 and current_bd in birthday:
             mat += 1
+        birthday.append(current_bd)
+        print(birthday[i], end=' ')
 
     print(text[lang]['first_r'] + str(mat))
-    '''
+    
     print(text[lang]['ini'])
 
     instances = 100_000
     total_mat = 0
 
     for t in range(instances):
-        if (instances + 1) % (t+1) == 0:
-            print(str(t + 1) + text[lang]['sim'])
+        if (t + 1) % 10_000 == 0:
+            print(f'{t + 1:,}' + text[lang]['sim'])
         months, days = generate_birthdays(resp)
         
         birthday = []
         mat = 0
         for i in range(resp):
-            birthday.append(text[lang]['months'][months[i]] + ' ' + str(days[i]))
-            if mat == 0 and i > 0 and birthday[i] in birthday:
+            current_bd = text[lang]['months'][months[i]] + ' ' + str(days[i])
+            if mat == 0 and i > 0 and current_bd in birthday:
                 mat += 1
                 break
+            birthday.append(current_bd)
         if mat > 0:
             total_mat += 1
 
     percent = (total_mat / instances) * 100
 
-    print(percent)
-    '''
+    print(text[lang]['results'].format(instances, resp, total_mat, resp, percent))
 
 if __name__ == "__main__":
     main()
