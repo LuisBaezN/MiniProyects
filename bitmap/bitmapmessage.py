@@ -11,6 +11,31 @@ def clear_screen() -> None:
     else:
         os.system("clear")  
 
+def get_choice(option: list, input_legend: str = 'Give me your choice: ', error_info: str='Choice not available.') -> str:
+    '''
+    Returns the choice user. It can be n options.
+    
+    Input:
+    ------
+    The option argument must be a list of strings. The input legend is the message delivered to the user to understand the available choices. 
+
+    Output:
+    -------
+    Returns the option that the user choose as a string.
+    '''
+    n = len(option)
+    cont = 0
+    while(True):
+        if cont > 0:
+            print(error_info)
+        print(17*'-')
+        resp = input(input_legend).lower().strip()
+        for i in range(n):
+            if resp == option[i]:
+                return resp
+        cont += 1
+        clear_screen()
+
 def main():
     bitmap = '''
     .........................................
@@ -45,17 +70,36 @@ def main():
     '''
     eng_text = {
         'wrong_c':'Option not available, please type again your choice.\n',
-        'title':'Birthday paradox.\n\nThe Birthday Pradox shows us that in agroup of N people, the odds that two of them have matching birthdays is surprisingly large.\n\n(It is not actually a paradox, it is just a surprising result)',
-        'input':'How many birthdays shall I generate? (Max 100) \n > ',
+        'title':'Bitmap Message.\n\n',
+        'input':'Enter the message to display with the bitmap.\n > ',
     }
     esp_text = {
         'wrong_c':'Opción no disponible, ingrese su elección nuevamente.\n',
-        'title':'Paradoja del cumpleaños.\n\nLa paradoja del cumpleaños muestra que dentro de un grupo de N personas, las probabilidades de que dos de ellas cumplan años el mismo día es sorpresivamente alta.\n\n(Actualmente no es una paradoja, solo un resultado sorprendente)',
-        'input':'Cuántos cumpleaños debería generar? (Max 100) \n > ',
+        'title':'Mensaje Bitmap.\n\n',
+        'input':'Ingrese el mensaje a desplegar con el bitmap.\n > ',
     }
     text = [eng_text, esp_text]
 
     clear_screen()
+
+    lang = int(get_choice(['1', '2'], 'Press 1 for english.\nPresione 2 para español.\n-> ', text[0]['wrong_c'])) - 1
+
+    clear_screen()
+
+    print(text[lang]['title'])
+    message = input(text[lang]['input'])
+
+    if message == '':
+        sys.exit()
+
+    len_mess = len(message)
+    for line in bitmap.splitlines():
+        for i, bit in enumerate(line):
+            if bit == ' ':
+                print(' ', end='')
+            else:
+                print(message[i % len_mess], end='')
+        print()
 
 if __name__ == '__main__':
     main()
