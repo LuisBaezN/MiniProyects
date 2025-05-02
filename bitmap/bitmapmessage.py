@@ -38,36 +38,36 @@ def get_choice(option: list, input_legend: str = 'Give me your choice: ', error_
 
 def main():
     bitmap = '''
-    .........................................
-    
-                     ***
-                     *****
-                      ****
-                       ***
-                       ***
-                       ***
-                       ***
-                       ***
-                       ***
-                       ***
-                       ***
-                       ***
-                       ***
-                       ***
-                      *****
-                    *********
-                  ***  ***  ***
-                ***    ***    ***
-              ***      ***      ***
-                ***    ***    ***
-                  ***  ***   ***
-                    *  ***   *
-                        *
-                       ***
-                        *
+.........................................
 
-    .........................................
-    '''
+                  ***
+                  *****
+                   ****
+                    ***
+                    ***
+                    ***
+                    ***
+                    ***
+                    ***
+                    ***
+                    ***
+                    ***
+                    ***
+                    ***
+                   *****
+                 *********
+               ***  ***  ***
+             ***    ***    ***
+           ***      ***      ***
+             ***    ***    ***
+               ***  ***   ***
+                 *  ***   *
+                     *
+                    ***
+                     *
+
+........................................
+'''
     eng_text = {
         'wrong_c':'Option not available, please type again your choice.\n',
         'title':'Bitmap Message.\n\n',
@@ -93,12 +93,20 @@ def main():
         sys.exit()
 
     len_mess = len(message)
+    i = 0
     for line in bitmap.splitlines():
-        for i, bit in enumerate(line):
+        for bit in line:
             if bit == ' ':
                 print(' ', end='')
+            elif bit == '.':
+                print('.', end='')
             else:
-                print(message[i % len_mess], end='')
+                letter = message[i % len_mess]
+                if letter == ' ':
+                    print('_', end='')
+                else:
+                    print(letter, end='')
+                i += 1
         print()
 
 if __name__ == '__main__':
